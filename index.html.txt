@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Registro de Serviços - Eletricistas</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        form { max-width: 500px; margin: 0 auto; }
+        input, textarea, button { width: 100%; padding: 10px; margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <h1>Registro de Serviço</h1>
+    <form id="formServico">
+        <input type="text" id="nome" placeholder="Nome do Eletricista" required>
+        <input type="text" id="servico" placeholder="Tipo de Serviço" required>
+        <textarea id="obs" placeholder="Observações"></textarea>
+        
+        <!-- Botão para capturar GPS -->
+        <button type="button" onclick="capturarGPS()">Capturar Localização</button>
+        <div id="gpsStatus">Localização não capturada.</div>
+        <input type="hidden" id="latitude">
+        <input type="hidden" id="longitude">
+        
+        <!-- Campo para foto (opcional) -->
+        <input type="file" id="foto" accept="image/*">
+        
+        <button type="submit">Enviar</button>
+    </form>
+
+    <script>
+        // Captura GPS
+        function capturarGPS() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        document.getElementById("latitude").value = position.coords.latitude;
+                        document.getElementById("longitude").value = position.coords.longitude;
+                        document.getElementById("gpsStatus").innerHTML = 
+                            `Localização capturada! (Lat: ${position.coords.latitude}, Lng: ${position.coords.longitude})`;
+                    },
+                    (error) => {
+                        alert("Erro ao capturar GPS: " + error.message);
+                    }
+                );
+            } else {
+                alert("GPS não suportado neste navegador.");
+            }
+        }
+
+        // Envia dados para o back-end (substitua pela sua API)
+        document.getElementById("formServico").addEventListener("submit", (e) => {
+            e.preventDefault();
+            const dados = {
+                nome: document.getElementById("nome").value,
+                servico: document.getElementById("servico").value,
+                obs: document.getElementById("obs").value,
+                latitude: document.getElementById("latitude").value,
+                longitude: document.getElementById("longitude").value,
+                foto: document.getElementById("foto").files[0]?.name || "Sem foto"
+            };
+            
+            // Aqui você envia os dados para um back-end (ex.: FormSubmit, Airtable, etc.)
+            alert("Dados prontos para enviar: " + JSON.stringify(dados));
+            // window.location.href = `mailto:seuemail@empresa.com?body=${encodeURIComponent(JSON.stringify(dados))}`;
+        });
+    </script>
+</body>
+</html>
